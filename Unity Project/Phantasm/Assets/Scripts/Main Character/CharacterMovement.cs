@@ -42,7 +42,7 @@ public class CharacterMovement : MonoBehaviour {
 
 	void Update () {
 
-	    Grounded = Physics2D.OverlapCircle(Tsf_Feet.position, 1.0f, Lyr_Ground);
+	    Grounded = Physics2D.OverlapCircle(Tsf_Feet.position, 0.5f, Lyr_Ground);
 
         Handle_Input();
 
