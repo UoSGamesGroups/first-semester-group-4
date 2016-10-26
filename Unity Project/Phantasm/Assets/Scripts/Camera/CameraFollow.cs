@@ -1,26 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CameraFollow : MonoBehaviour {
+public class CameraFollow : MonoBehaviour
+{
 
-    public Transform Target;
-    public float Damp_Time;
-    private Vector3 Velocity = Vector3.zero;
+    public Transform target;
+    private Vector3 velocity;
 
-    public float Left_Boundary, Right_Boundary;
+    public float leftBoundary, rightBoundary;
+    public float dampTime;
 
-	void FixedUpdate () {
+    private void FixedUpdate ()
+    {
+	    var point = GetComponent<Camera>().WorldToViewportPoint(target.position);
+	    var delta = new Vector3(target.position.x, 0, target.position.z) -
+	                    GetComponent<Camera>().ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z));
+	    var destination = GetComponent<Transform>().position + delta;
 
-	    Vector3 Point = GetComponent<Camera>().WorldToViewportPoint(Target.position);
-	    Vector3 Delta = new Vector3(Target.position.x, 0, Target.position.z) -
-	                    GetComponent<Camera>().ViewportToWorldPoint(new Vector3(0.5f, 0.5f, Point.z));
-	    Vector3 Destination = GetComponent<Transform>().position + Delta;
+	    var nextPosition = Vector3.SmoothDamp(GetComponent<Transform>().position, destination,
+	        ref velocity, dampTime);
 
-	    Vector3 Next_Position = Vector3.SmoothDamp(GetComponent<Transform>().position, Destination,
-	        ref Velocity, Damp_Time);
-
-        if (Next_Position.x >= Left_Boundary && Next_Position.x <= Right_Boundary) {
-            GetComponent<Transform>().position = Next_Position;
+        if (nextPosition.x >= leftBoundary && nextPosition.x <= rightBoundary)
+        {
+            GetComponent<Transform>().position = nextPosition;
         }
 
 	}

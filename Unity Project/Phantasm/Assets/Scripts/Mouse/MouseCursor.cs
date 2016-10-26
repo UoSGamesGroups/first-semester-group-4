@@ -1,18 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MouseCursor : MonoBehaviour {
+public class MouseCursor : MonoBehaviour
+{
 
-	void Start () {
+    private void Start ()
+    {
 	    Cursor.visible = false;
 	}
 
-	void Update () {
-
-        var Mouse_Position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Mouse_Position.z = 0;
-	    GetComponent<Transform>().position = Mouse_Position;
-
+    private void Update ()
+    {
+        var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition.z = 0;
+	    GetComponent<Transform>().position = mousePosition;
 	}
 
 }

@@ -1,55 +1,50 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CharacterMovement : MonoBehaviour {
+public class CharacterMovement : MonoBehaviour
+{
 
-    public float Speed, Jump_Power, Max_Speed;
+    public float speed, jumpPower;
+    private Vector2 velocity;
 
-    private Vector2 Velocity;
+    public LayerMask lyrGround;
+    public Transform feet;
 
-    public KeyCode Key_Left, Key_Left_Alt;
-    public KeyCode Key_Right, Key_Right_Alt;
-    public KeyCode Key_Jump, Key_Jump_Alt;
+    public KeyCode keyLeft, keyLeftAlt;
+    public KeyCode keyRight, keyRightAlt;
+    public KeyCode keyJump, keyJumpAlt;
 
-    public LayerMask Lyr_Ground;
-    public Transform Tsf_Feet;
+    public bool grounded;
 
-    public bool Grounded;
-
-    void Handle_Input() {
-
-        if (Input.GetKey(Key_Left) || Input.GetKey(Key_Left_Alt)) {
-            Velocity.x = -Speed;
+    private void handleInput()
+    {
+        if (Input.GetKey(keyLeft) || Input.GetKey(keyLeftAlt))
+        {
+            velocity.x = -speed;
         }
-        else if (Input.GetKey(Key_Right) || Input.GetKey(Key_Right_Alt)) {
-            Velocity.x = Speed;
+        else if (Input.GetKey(keyRight) || Input.GetKey(keyRightAlt))
+        {
+            velocity.x = speed;
         }
         else {
-            Velocity.x = 0;
+            velocity.x = 0;
         }
 
-        if ((Input.GetKeyDown(Key_Jump) || Input.GetKeyDown(Key_Jump_Alt)) && Grounded) {
-            Velocity.y = Jump_Power;
+        if ((Input.GetKeyDown(keyJump) || Input.GetKeyDown(keyJumpAlt)) && grounded)
+        {
+            velocity.y = jumpPower;
         }
-
-
     }
 
-    void Add_Force(Vector2 _Force) {
+    private void Update ()
+    {
+	    grounded = Physics2D.OverlapCircle(feet.position, 0.5f, lyrGround);
 
+        handleInput();
+
+        GetComponent<Rigidbody2D>().velocity = new Vector2(velocity.x, GetComponent<Rigidbody2D>().velocity.y + velocity.y);
+
+        velocity = Vector2.zero;
     }
-
-
-	void Update () {
-
-	    Grounded = Physics2D.OverlapCircle(Tsf_Feet.position, 0.5f, Lyr_Ground);
-
-        Handle_Input();
-
-        GetComponent<Rigidbody2D>().velocity = new Vector2(Velocity.x, GetComponent<Rigidbody2D>().velocity.y + Velocity.y);
-
-	    Velocity = Vector2.zero;
-
-	}
 
 }

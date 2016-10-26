@@ -1,23 +1,27 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class MenuItem : MonoBehaviour {
+public abstract class MenuItem : MonoBehaviour
+{
 
-    public Sprite Spr_Idle, Spr_Selected;
-    private bool Selected;
+    public Sprite sprIdle, sprSelected;
+    private bool selected;
 
-    void Start() {
-        Selected = false;
+    private void Start()
+    {
+        selected = false;
     }
 
-    public virtual void Set_Selected(bool _State) {
-        Selected = _State;
+    public virtual void setSelected(bool state)
+    {
+        selected = state;
     }
 
-    public virtual void Update() {
-        GetComponent<Image>().sprite = Selected ? Spr_Selected : Spr_Idle;
+    public virtual void Update()
+    {
+        GetComponent<Image>().sprite = selected ? sprSelected : sprIdle;
     }
 
-    public abstract void Execute();
+    public abstract void execute();
 
 }
