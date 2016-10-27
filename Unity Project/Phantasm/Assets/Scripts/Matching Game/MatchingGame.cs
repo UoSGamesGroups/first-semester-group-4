@@ -1,68 +1,67 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+using UnityEngine.UI;
 using System.Linq;
-using System.Security.Policy;
+using System.Collections.Generic;
 
 public class MatchingGame : MonoBehaviour
 {
 
-    public List<TileData> tileData;
-    public List<GameObject> tileSpaces;
+    public Text txtCountdown;
 
     public AudioSource sfxSuccess;
     public AudioSource sfxWin;
 
+    public List<TileData> tileData;
+    public List<GameObject> tileSpaces;
+
+    private const float timeGiven = 60f;
+    private float timeLeft = 10f;
     private bool playing;
 
     private struct FlippedTile
     {
+
+        public readonly int index;
+        public readonly int value;
+
         public FlippedTile(int index, int value)
         {
             this.index = index;
             this.value = value;
         }
 
-        public readonly int index;
-        public readonly int value;
-
     }
-
 
     private void Start()
     {
-        initializeTiles();
+        placeTiles();
+        resetGame();
+    }
+
+    private void placeTiles()
+    {
+        for (var i = 0; i < tileSpaces.Count; i++)
+        {
+            tileSpaces[i].GetComponent<Tile>().setData(tileData[i]);
+        }
+    }
+
+    private void resetGame()
+    {
+        resetTiles();
+        shuffleTiles();
         playing = true;
+        timeLeft = timeGiven;
     }
 
-    private void initializeTiles()
-    {
-        var avaliableSpaces = new List<int>();
-        for (var i = 0; i < tileSpaces.Count; i++)
+    private void shuffleTiles() {
+        for (var i = tileSpaces.Count - 1; i > 0; i--)
         {
-            avaliableSpaces.Add(i);
+            var index = Random.Range(0, i);
+            var temp = tileSpaces[index].GetComponent<Tile>().getData();
+            tileSpaces[index].GetComponent<Tile>().setData(tileSpaces[i].GetComponent<Tile>().getData());
+            tileSpaces[i].GetComponent<Tile>().setData(temp);
         }
-        while (avaliableSpaces.Count > 0)
-        {
-            var chosenSpace = Random.Range(0, avaliableSpaces.Count);
-            var chosenTileData = Random.Range(0, tileData.Count);
-            tileSpaces[avaliableSpaces[chosenSpace]].GetComponent<Tile>().setData(tileData[chosenTileData]);
-            avaliableSpaces.RemoveAt(chosenSpace);
-            tileData.RemoveAt(chosenTileData);
-        }
-    }
-
-    private List<FlippedTile> getFlippedTiles()
-    {
-        var t = new List<FlippedTile>();
-        for (var i = 0; i < tileSpaces.Count; i++)
-        {
-            if (tileSpaces[i].GetComponent<Tile>().isFlipped() && !tileSpaces[i].GetComponent<Tile>().isHeld())
-            {
-                t.Add(new FlippedTile(i, tileSpaces[i].GetComponent<Tile>().getID()));
-            }
-        }
-        return t;
     }
 
     private void checkMatches()
@@ -84,8 +83,27 @@ public class MatchingGame : MonoBehaviour
             }
         }
 
-     }
-    
+    }
+
+    private List<FlippedTile> getFlippedTiles() {
+        var t = new List<FlippedTile>();
+        for (var i = 0; i < tileSpaces.Count; i++)
+        {
+            if (tileSpaces[i].GetComponent<Tile>().isFlipped() && !tileSpaces[i].GetComponent<Tile>().isHeld())
+            {
+                t.Add(new FlippedTile(i, tileSpaces[i].GetComponent<Tile>().getID()));
+            }
+        }
+        return t;
+    }
+
+    private void resetTiles()
+    {
+        foreach (var t in tileSpaces)
+        {
+            t.GetComponent<Tile>().reset();
+        }
+    }
 
     private bool checkWin()
     {
@@ -94,15 +112,27 @@ public class MatchingGame : MonoBehaviour
 
     private void Update()
     {
+
         if (playing)
         {
+            timeLeft -= Time.deltaTime;
+            txtCountdown.text = string.Format("{0:0.00}", timeLeft);
+
+            if (timeLeft <= 0)
+            {
+                resetGame();
+            }
+
             checkMatches();
+
             if (checkWin())
             {
                 sfxWin.Play();
                 playing = false;
             }
+
         }
+
     }
 
 }
