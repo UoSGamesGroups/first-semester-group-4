@@ -5,9 +5,11 @@ using UnityEngine.SceneManagement;
 public class MIPlay : MenuItem
 {
 
+    public SceneTransitioner sceneTransitioner;
+
     public override void execute()
     {
-        SceneManager.LoadScene(1);
+        sceneTransitioner.changeScene(1);
     }
 
 }

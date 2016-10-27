@@ -6,6 +6,8 @@ using System.Collections.Generic;
 public class MatchingGame : MonoBehaviour
 {
 
+    public SceneTransitioner sceneTransitioner;
+
     public Text txtCountdown;
 
     public AudioSource sfxSuccess;
@@ -74,6 +76,7 @@ public class MatchingGame : MonoBehaviour
                 tileSpaces[flippedTiles[0].index].GetComponent<Tile>().hold();
                 tileSpaces[flippedTiles[1].index].GetComponent<Tile>().hold();
                 sfxSuccess.Play();
+                timeLeft += 5f;
             }
             else {
                 for (var i = 0; i < flippedTiles.Count; i++)
@@ -129,6 +132,7 @@ public class MatchingGame : MonoBehaviour
             {
                 sfxWin.Play();
                 playing = false;
+                sceneTransitioner.changeScene(0);
             }
 
         }
