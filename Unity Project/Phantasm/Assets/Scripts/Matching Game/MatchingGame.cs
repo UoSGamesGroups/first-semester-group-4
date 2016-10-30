@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using System.Collections.Generic;
@@ -16,7 +17,8 @@ public class MatchingGame : MonoBehaviour
     public List<TileData> tileData;
     public List<GameObject> tileSpaces;
 
-    private const float timeGiven = 30f;
+    private const float TIMEGIVEN = 30f;
+    private const float TIMEREWARD = 2.5f;
     private float timeLeft;
     private bool playing;
 
@@ -53,7 +55,7 @@ public class MatchingGame : MonoBehaviour
         resetTiles();
         shuffleTiles();
         playing = true;
-        timeLeft = timeGiven;
+        timeLeft = TIMEGIVEN;
     }
 
     private void shuffleTiles() {
@@ -76,7 +78,7 @@ public class MatchingGame : MonoBehaviour
                 tileSpaces[flippedTiles[0].index].GetComponent<Tile>().hold();
                 tileSpaces[flippedTiles[1].index].GetComponent<Tile>().hold();
                 sfxSuccess.Play();
-                timeLeft += 5f;
+                timeLeft += TIMEREWARD;
             }
             else {
                 for (var i = 0; i < flippedTiles.Count; i++)
@@ -119,7 +121,7 @@ public class MatchingGame : MonoBehaviour
         if (playing)
         {
             timeLeft -= Time.deltaTime;
-            txtCountdown.text = string.Format("{0:0.00}", timeLeft);
+            txtCountdown.text = "TIME LEFT\n" + string.Format("{0:0.00}", timeLeft);
 
             if (timeLeft <= 0)
             {
@@ -132,11 +134,17 @@ public class MatchingGame : MonoBehaviour
             {
                 sfxWin.Play();
                 playing = false;
-                sceneTransitioner.changeScene(0);
+                StartCoroutine(changeScene(2));
             }
 
         }
 
+    }
+
+    private IEnumerator changeScene(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        sceneTransitioner.changeScene(0);
     }
 
 }
