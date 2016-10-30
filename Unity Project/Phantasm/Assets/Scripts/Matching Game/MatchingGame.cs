@@ -16,8 +16,8 @@ public class MatchingGame : MonoBehaviour
     public List<TileData> tileData;
     public List<GameObject> tileSpaces;
 
-    private const float timeGiven = 60f;
-    private float timeLeft = 10f;
+    private const float timeGiven = 30f;
+    private float timeLeft;
     private bool playing;
 
     private struct FlippedTile
