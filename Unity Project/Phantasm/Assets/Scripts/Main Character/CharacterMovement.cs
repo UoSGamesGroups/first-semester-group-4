@@ -14,20 +14,23 @@ public class CharacterMovement : MonoBehaviour
     public KeyCode keyRight, keyRightAlt;
     public KeyCode keyJump, keyJumpAlt;
 
-    public bool grounded;
+    public bool grounded, walking;
 
     private void handleInput()
     {
         if (Input.GetKey(keyLeft) || Input.GetKey(keyLeftAlt))
         {
             velocity.x = -speed;
+            walking = true;
         }
         else if (Input.GetKey(keyRight) || Input.GetKey(keyRightAlt))
         {
             velocity.x = speed;
+            walking = true;
         }
         else {
             velocity.x = 0;
+            walking = false;
         }
 
         if ((Input.GetKeyDown(keyJump) || Input.GetKeyDown(keyJumpAlt)) && grounded)
@@ -39,6 +42,9 @@ public class CharacterMovement : MonoBehaviour
     private void Update ()
     {
 	    grounded = Physics2D.OverlapCircle(feet.position, 0.5f, lyrGround);
+        GetComponent<Animator>().SetBool("Jumping", !grounded);
+        GetComponent<Animator>().SetBool("Walking", walking);
+
 
         handleInput();
 
