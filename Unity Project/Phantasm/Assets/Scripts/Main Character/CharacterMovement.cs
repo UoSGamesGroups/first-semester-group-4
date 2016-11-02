@@ -4,53 +4,118 @@ using System.Collections;
 public class CharacterMovement : MonoBehaviour
 {
 
-    public float speed, jumpPower;
-    private Vector2 velocity;
-
-    public LayerMask lyrGround;
-    public Transform feet;
-
     public KeyCode keyLeft, keyLeftAlt;
     public KeyCode keyRight, keyRightAlt;
     public KeyCode keyJump, keyJumpAlt;
 
-    public bool grounded, walking;
+    public LayerMask layerGround;
+    public Transform playersFeet;
+
+    public float walkSpeed;
+    public float jumpPower;
+
+    private Vector3 startScale;
+
+    private enum direction
+    {
+        left,
+        right
+    }
+
+    private void Start()
+    {
+        var globalState = GameObject.Find("Global State").GetComponent<GlobalState>().getInstance();
+        if (globalState.playerData.needsPorting)
+        {
+            GetComponent<Transform>().position = globalState.playerData.startPosition;
+            globalState.playerData.needsPorting = false;
+        }
+       startScale = GetComponent<Transform>().localScale;
+    }
+
+    private void Update()
+    {
+        handleInput();
+        animate();
+    }
 
     private void handleInput()
     {
+        if ((Input.GetKeyDown(keyJump) || Input.GetKeyDown(keyJumpAlt)) && isGrounded())
+        {
+            jump();
+        }
         if (Input.GetKey(keyLeft) || Input.GetKey(keyLeftAlt))
         {
-            velocity.x = -speed;
-            walking = true;
+            walk(direction.left);
         }
         else if (Input.GetKey(keyRight) || Input.GetKey(keyRightAlt))
         {
-            velocity.x = speed;
-            walking = true;
+            walk(direction.right);
         }
-        else {
-            velocity.x = 0;
-            walking = false;
-        }
-
-        if ((Input.GetKeyDown(keyJump) || Input.GetKeyDown(keyJumpAlt)) && grounded)
+        else
         {
-            velocity.y = jumpPower;
+            stopWalking();
         }
     }
 
-    private void Update ()
+    private void walk(direction direction)
     {
-	    grounded = Physics2D.OverlapCircle(feet.position, 0.5f, lyrGround);
-        GetComponent<Animator>().SetBool("Jumping", !grounded);
-        GetComponent<Animator>().SetBool("Walking", walking);
+        var currentVelocity = GetComponent<Rigidbody2D>().velocity;
+        switch (direction)
+        {
+            case direction.left:
+                flipSprite(direction.left);
+                GetComponent<Rigidbody2D>().velocity = new Vector2(-walkSpeed * Time.deltaTime, currentVelocity.y);
+                break;
+            case direction.right:
+                flipSprite(direction.right);
+                GetComponent<Rigidbody2D>().velocity = new Vector2(walkSpeed * Time.deltaTime, currentVelocity.y);
+                break;
+        }
+    }
+
+    private void flipSprite(direction direction)
+    {
+        switch (direction)
+        {
+            case direction.left:
+                GetComponent<Transform>().localScale = new Vector3(-startScale.x, startScale.y, startScale.z);
+                break;
+            case direction.right:
+                GetComponent<Transform>().localScale = new Vector3(startScale.x, startScale.y, startScale.z);
+                break;
+        }
+    }
 
 
-        handleInput();
+    private void stopWalking()
+    {
+        var currentVelocity = GetComponent<Rigidbody2D>().velocity;
+        GetComponent<Rigidbody2D>().velocity = new Vector2(0, currentVelocity.y);
+    }
 
-        GetComponent<Rigidbody2D>().velocity = new Vector2(velocity.x, GetComponent<Rigidbody2D>().velocity.y + velocity.y);
+    private void jump()
+    {
+        var currentVelocity = GetComponent<Rigidbody2D>().velocity;
+        GetComponent<Rigidbody2D>().velocity = new Vector2(currentVelocity.x, currentVelocity.y + jumpPower * Time.deltaTime);
+    }
 
-        velocity = Vector2.zero;
+    private void animate()
+    {
+        GetComponent<Animator>().SetBool("Jumping", !isGrounded());
+        GetComponent<Animator>().SetBool("Walking", isWalking());
+    }
+
+    private bool isGrounded()
+    {
+        return Physics2D.OverlapCircle(playersFeet.position, 0.1f, layerGround);
+    }
+
+    private bool isWalking()
+    {
+        var currentVelocity = GetComponent<Rigidbody2D>().velocity;
+        return currentVelocity.x >= 0.1f || currentVelocity.x <= -0.1f;
     }
 
 }
