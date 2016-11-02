@@ -17,7 +17,7 @@ public class MatchingGame : MonoBehaviour
     public List<TileData> tileData;
     public List<GameObject> tileSpaces;
 
-    private const float TIMEGIVEN = 30f;
+    private const float TIMEGIVEN = 60f;
     private const float TIMEREWARD = 2.5f;
     private float timeLeft;
     private bool playing;
@@ -132,19 +132,38 @@ public class MatchingGame : MonoBehaviour
 
             if (checkWin())
             {
-                sfxWin.Play();
                 playing = false;
-                StartCoroutine(changeScene(2));
+                win();
             }
 
         }
 
     }
 
+    private void win()
+    {
+        var globalState = GameObject.Find("Global State").GetComponent<GlobalState>().getInstance();
+        globalState.puzzleData.puzzle1Solved = true;
+        globalState.playerData.needsPorting = true;
+        globalState.playerData.startPosition = new Vector2(11.5f, -40.0f);
+        globalState.saveState();
+        sfxWin.Play();
+        StartCoroutine(changeScene(1.5f));
+    }
+
     private IEnumerator changeScene(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-        sceneTransitioner.changeScene(0);
+        sceneTransitioner.changeScene(1);
+    }
+
+    public void solve()
+    {
+        foreach (var tile in tileSpaces)
+        {
+            tile.GetComponent<Tile>().flip();
+            win();
+        }
     }
 
 }
