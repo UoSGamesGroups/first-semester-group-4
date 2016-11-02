@@ -80,6 +80,7 @@ public class CharacterMovement : MonoBehaviour
         switch (direction)
         {
             case direction.left:
+                Debug.Log("X");
                 GetComponent<Transform>().localScale = new Vector3(-startScale.x, startScale.y, startScale.z);
                 break;
             case direction.right:
