@@ -18,7 +18,7 @@ public class MatchingGame : MonoBehaviour
     public List<GameObject> tileSpaces;
 
 
-    private const float TIME_GIVEN = 45f;
+    public float timeGiven = 45f;
     private const float TIME_REWARD = 2.5f;
     private const float PEEK_TIME = 0.5f;
 
@@ -41,7 +41,7 @@ public class MatchingGame : MonoBehaviour
 
     private void Start()
     {
-        timeLeft = TIME_GIVEN;
+        timeLeft = timeGiven;
         txtCountdown.text = "TIME LEFT\n" + string.Format("{0:0.00}", timeLeft);
         placeTiles();
         resetGame();
@@ -131,7 +131,7 @@ public class MatchingGame : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
         playing = true;
-        timeLeft = TIME_GIVEN;
+        timeLeft = timeGiven;
     }
 
     private bool checkWin()
