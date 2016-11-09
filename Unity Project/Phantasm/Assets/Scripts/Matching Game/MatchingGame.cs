@@ -17,8 +17,11 @@ public class MatchingGame : MonoBehaviour
     public List<TileData> tileData;
     public List<GameObject> tileSpaces;
 
-    private const float TIMEGIVEN = 60f;
-    private const float TIMEREWARD = 2.5f;
+
+    private const float TIME_GIVEN = 45f;
+    private const float TIME_REWARD = 2.5f;
+    private const float PEEK_TIME = 0.5f;
+
     private float timeLeft;
     private bool playing;
 
@@ -38,8 +41,23 @@ public class MatchingGame : MonoBehaviour
 
     private void Start()
     {
+        timeLeft = TIME_GIVEN;
+        txtCountdown.text = "TIME LEFT\n" + string.Format("{0:0.00}", timeLeft);
         placeTiles();
         resetGame();
+        StartCoroutine(peekTiles());
+    }
+
+    private IEnumerator peekTiles()
+    {
+        foreach (var tile in tileSpaces)
+        {
+           tile.GetComponent<Tile>().flip();
+            yield return new WaitForSeconds(0.1f);
+            tile.GetComponent<Tile>().hold();
+        }
+        yield return new WaitForSeconds(PEEK_TIME);
+        startGame();
     }
 
     private void placeTiles()
@@ -50,12 +68,15 @@ public class MatchingGame : MonoBehaviour
         }
     }
 
+    private void startGame()
+    {
+        StartCoroutine(resetTiles());
+    }
+
     private void resetGame()
     {
         resetTiles();
         shuffleTiles();
-        playing = true;
-        timeLeft = TIMEGIVEN;
     }
 
     private void shuffleTiles() {
@@ -78,7 +99,7 @@ public class MatchingGame : MonoBehaviour
                 tileSpaces[flippedTiles[0].index].GetComponent<Tile>().hold();
                 tileSpaces[flippedTiles[1].index].GetComponent<Tile>().hold();
                 sfxSuccess.Play();
-                timeLeft += TIMEREWARD;
+                timeLeft += TIME_REWARD;
             }
             else {
                 for (var i = 0; i < flippedTiles.Count; i++)
@@ -102,12 +123,15 @@ public class MatchingGame : MonoBehaviour
         return t;
     }
 
-    private void resetTiles()
+    private IEnumerator resetTiles()
     {
-        foreach (var t in tileSpaces)
+        for(var i = tileSpaces.Count - 1; i >= 0; i--)
         {
-            t.GetComponent<Tile>().reset();
+            tileSpaces[i].GetComponent<Tile>().reset();
+            yield return new WaitForSeconds(0.1f);
         }
+        playing = true;
+        timeLeft = TIME_GIVEN;
     }
 
     private bool checkWin()
@@ -126,6 +150,7 @@ public class MatchingGame : MonoBehaviour
             if (timeLeft <= 0)
             {
                 resetGame();
+                startGame();
             }
 
             checkMatches();

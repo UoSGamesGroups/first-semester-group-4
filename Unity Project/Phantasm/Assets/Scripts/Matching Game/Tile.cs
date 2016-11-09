@@ -14,7 +14,8 @@ public class Tile : MonoBehaviour {
     private bool flipping;
     private bool flippable;
 
-    public void Start() {
+    public void Start()
+    {
         startScale = GetComponent<Transform>().localScale.x;
         flippable = true;
         flipSpeed = 0.5f;
@@ -31,7 +32,8 @@ public class Tile : MonoBehaviour {
     }
 
     public void flip() {
-        if (flippable && !flipping) {
+        if (flippable && !flipping)
+        {
             StartCoroutine(flipAnimation());
         }
     }
@@ -39,20 +41,26 @@ public class Tile : MonoBehaviour {
     public IEnumerator flipAnimation()
     {
         flipping = true;
-        if (!flipped) {
-            for (var i = startScale; i >= -startScale; i -= 0.01f) {
+        if (!flipped)
+        {
+            for (var i = startScale; i >= -startScale; i -= 0.01f)
+            {
                 GetComponent<Transform>().localScale = new Vector3(i, GetComponent<Transform>().localScale.y, GetComponent<Transform>().localScale.z);
-                if (i <= 0) {
+                if (i <= 0)
+                {
                     GetComponent<Image>().sprite = sprFront;
                 }
                 yield return new WaitForSeconds(flipSpeed * Time.deltaTime);
             }
             flipped = true;
         }
-        else {
-            for (var i = -startScale; i <= startScale; i += 0.01f) {
+        else
+        {
+            for (var i = -startScale; i <= startScale; i += 0.01f)
+            {
                 GetComponent<Transform>().localScale = new Vector3(i, GetComponent<Transform>().localScale.y, GetComponent<Transform>().localScale.z);
-                if (i >= 0) {
+                if (i >= 0)
+                {
                     GetComponent<Image>().sprite = sprBack;
                 }
                 yield return new WaitForSeconds(flipBackSpeed * Time.deltaTime);
@@ -67,11 +75,13 @@ public class Tile : MonoBehaviour {
         return flipped;
     }
 
-    public void hold() {
+    public void hold()
+    {
         flippable = false;
     }
 
-    public bool isHeld() {
+    public bool isHeld()
+    {
         return !flippable;
     }
 
@@ -80,13 +90,15 @@ public class Tile : MonoBehaviour {
         return id;
     }
 
-    public void setData(TileData tileData) {
+    public void setData(TileData tileData)
+    {
         sprBack = tileData.sprBack;
         sprFront = tileData.sprFront;
         id = tileData.id;
     }
 
-    public TileData getData() {
+    public TileData getData()
+    {
         var tileData = ScriptableObject.CreateInstance<TileData>();
         tileData.sprFront = sprFront;
         tileData.sprBack = sprBack;
