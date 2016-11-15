@@ -15,6 +15,7 @@ public class GlobalState : MonoBehaviour
     public struct PuzzleData
     {
         public bool puzzle1Solved;
+        public bool puzzle2Solved;
     }
 
     public PlayerData playerData;

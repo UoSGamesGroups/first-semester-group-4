@@ -24,6 +24,7 @@ public class MatchingGame : MonoBehaviour
 
     private float timeLeft;
     private bool playing;
+    private int scene = 0;
 
     private struct FlippedTile
     {
@@ -168,9 +169,20 @@ public class MatchingGame : MonoBehaviour
     private void win()
     {
         var globalState = GameObject.Find("Global State").GetComponent<GlobalState>().getInstance();
-        globalState.puzzleData.puzzle1Solved = true;
-        globalState.playerData.needsPorting = true;
-        globalState.playerData.startPosition = new Vector2(11.5f, -40.0f);
+        if (!globalState.puzzleData.puzzle1Solved)
+        {
+            globalState.puzzleData.puzzle1Solved = true;
+            globalState.playerData.needsPorting = true;
+            globalState.playerData.startPosition = new Vector2(11.5f, -40.0f);
+            scene = 1;
+        }
+        else if (!globalState.puzzleData.puzzle2Solved)
+        {
+            globalState.puzzleData.puzzle2Solved = true;
+            globalState.playerData.needsPorting = true;
+            globalState.playerData.startPosition = new Vector2(49.08f, 57.14f);
+            scene = 4;
+        }
         globalState.saveState();
         sfxWin.Play();
         StartCoroutine(changeScene(1.5f));
@@ -179,7 +191,7 @@ public class MatchingGame : MonoBehaviour
     private IEnumerator changeScene(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-        sceneTransitioner.changeScene(1);
+        sceneTransitioner.changeScene(scene);
     }
 
     public void solve()
