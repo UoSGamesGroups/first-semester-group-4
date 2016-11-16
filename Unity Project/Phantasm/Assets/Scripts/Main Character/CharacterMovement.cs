@@ -80,7 +80,6 @@ public class CharacterMovement : MonoBehaviour
         switch (direction)
         {
             case direction.left:
-                Debug.Log("X");
                 GetComponent<Transform>().localScale = new Vector3(-startScale.x, startScale.y, startScale.z);
                 break;
             case direction.right:
@@ -117,6 +116,22 @@ public class CharacterMovement : MonoBehaviour
     {
         var currentVelocity = GetComponent<Rigidbody2D>().velocity;
         return currentVelocity.x >= 0.1f || currentVelocity.x <= -0.1f;
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "MovingPlatform")
+        {
+            GetComponent<Transform>().parent = collision.transform;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "MovingPlatform")
+        {
+            GetComponent<Transform>().parent = null;
+        }
     }
 
 }

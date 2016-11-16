@@ -17,6 +17,10 @@ public class MatchingGame : MonoBehaviour
     public List<TileData> tileData;
     public List<GameObject> tileSpaces;
 
+    public int puzzleID;
+    public int returnSceneID;
+    public Vector2 returnPosition;
+
 
     public float timeGiven = 45f;
     private const float TIME_REWARD = 2.5f;
@@ -24,7 +28,6 @@ public class MatchingGame : MonoBehaviour
 
     private float timeLeft;
     private bool playing;
-    private int scene = 0;
 
     private struct FlippedTile
     {
@@ -169,20 +172,11 @@ public class MatchingGame : MonoBehaviour
     private void win()
     {
         var globalState = GameObject.Find("Global State").GetComponent<GlobalState>().getInstance();
-        if (!globalState.puzzleData.puzzle1Solved)
-        {
-            globalState.puzzleData.puzzle1Solved = true;
-            globalState.playerData.needsPorting = true;
-            globalState.playerData.startPosition = new Vector2(11.5f, -40.0f);
-            scene = 1;
-        }
-        else if (!globalState.puzzleData.puzzle2Solved)
-        {
-            globalState.puzzleData.puzzle2Solved = true;
-            globalState.playerData.needsPorting = true;
-            globalState.playerData.startPosition = new Vector2(49.08f, 57.14f);
-            scene = 4;
-        }
+
+        globalState.puzzlesSolved = puzzleID;
+        globalState.playerData.needsPorting = true;
+        globalState.playerData.startPosition = returnPosition;
+
         globalState.saveState();
         sfxWin.Play();
         StartCoroutine(changeScene(1.5f));
@@ -191,7 +185,7 @@ public class MatchingGame : MonoBehaviour
     private IEnumerator changeScene(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-        sceneTransitioner.changeScene(scene);
+        sceneTransitioner.changeScene(returnSceneID);
     }
 
     public void solve()
