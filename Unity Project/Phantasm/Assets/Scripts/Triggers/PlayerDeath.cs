@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class ReloadScene : TriggerAction
+public class PlayerDeath : TriggerAction
 {
 
     public SceneTransitioner sceneTransitioner;
@@ -16,6 +16,9 @@ public class ReloadScene : TriggerAction
 
     public override void execute()
     {
+        var globalState = GameObject.Find("Global State").GetComponent<GlobalState>().getInstance();
+        globalState.orbsCollected -= globalState.orbsSinceLastDeath;
+        globalState.orbsSinceLastDeath = 0;
         StartCoroutine(reloadScene());
     }
 
