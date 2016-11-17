@@ -14,10 +14,10 @@ public class MovingPlatform : MonoBehaviour
 
 	private void FixedUpdate ()
 	{
-	    if (!active || path.Count <= 0) return;
+	    if (path.Count <= 0) return;
 	    Vector2 currentPosition = GetComponent<Transform>().position;
 	    Vector2 targetPosition = path[current].position;
-	    if (currentPosition == targetPosition)
+	    if (currentPosition == targetPosition && active)
 	    {
 	        if (current + 1 < path.Count)
 	        {
