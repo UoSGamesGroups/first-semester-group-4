@@ -6,15 +6,11 @@ public class GlobalState : MonoBehaviour
 
     public static GlobalState instance;
 
-    public struct PlayerData
-    {
-        public bool needsPorting;
-        public Vector2 startPosition;
-    }
-
-    public PlayerData playerData;
+    public Vector2 respawnPoint;
 
     public int puzzlesSolved = 0;
+    public int orbsCollected = 0;
+    public int orbsSinceLastDeath = 0;
 
     private void Awake()
     {
@@ -31,12 +27,18 @@ public class GlobalState : MonoBehaviour
 
     private void Start()
     {
-        playerData = instance.playerData;
+        respawnPoint = instance.respawnPoint;
+        orbsCollected = instance.orbsCollected;
+        orbsSinceLastDeath = instance.orbsSinceLastDeath;
+        puzzlesSolved = instance.puzzlesSolved;
     }
 
     public void saveState()
     {
-        instance.playerData = playerData;
+        instance.respawnPoint = respawnPoint;
+        instance.orbsCollected = orbsCollected;
+        instance.orbsSinceLastDeath = orbsSinceLastDeath;
+        instance.puzzlesSolved = puzzlesSolved;
     }
 
     public GlobalState getInstance()

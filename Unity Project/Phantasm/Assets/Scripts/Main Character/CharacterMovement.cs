@@ -25,11 +25,7 @@ public class CharacterMovement : MonoBehaviour
     private void Start()
     {
         var globalState = GameObject.Find("Global State").GetComponent<GlobalState>().getInstance();
-        if (globalState.playerData.needsPorting)
-        {
-            GetComponent<Transform>().position = globalState.playerData.startPosition;
-            globalState.playerData.needsPorting = false;
-        }
+        GetComponent<Transform>().position = globalState.respawnPoint;
        startScale = GetComponent<Transform>().localScale;
     }
 

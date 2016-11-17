@@ -174,10 +174,9 @@ public class MatchingGame : MonoBehaviour
         var globalState = GameObject.Find("Global State").GetComponent<GlobalState>().getInstance();
 
         globalState.puzzlesSolved = puzzleID;
-        globalState.playerData.needsPorting = true;
-        globalState.playerData.startPosition = returnPosition;
-
+        globalState.respawnPoint = returnPosition;
         globalState.saveState();
+
         sfxWin.Play();
         StartCoroutine(changeScene(1.5f));
     }
